@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>İyi ki doğdunuz, Zeynep!</title>
+  <meta name="description" content="Zeynep için sade, şık ve duygusal doğum günü sürprizi." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="hearts" id="hearts"></div>
+    <div class="grain"></div>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <span class="miniHeart">❤</span>
+      <span class="topbar__text">İyi ki doğdunuz, Zeynep</span>
+      <button id="musicBtn" class="musicBtn" type="button" aria-label="Müziği Başlat">
+        🔊 Müziği Başlat
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card hero reveal">
+      <div class="pill">🎂 Doğum Günü</div>
+      <h1>İyi ki doğdunuz, <span class="accent">Zeynep</span>!</h1>
+      <p class="lead">Bugün sizin gününüz… iyi ki varsınız.</p>
+
+      <div class="ctaRow">
+        <button id="btn" class="btn" type="button">Kalbimizden 🎀</button>
+        <span id="toast" class="toast" role="status" aria-live="polite" hidden>
+          İyi ki varsınız Zeynep! 🌸
+        </span>
+      </div>
+    </section>
+
+    <section class="card reveal">
+      <h2>💌 Kızından küçük bir not</h2>
+      <p class="muted">
+        <span class="placeholder">[KIZIN_NOTU]</span>
+      </p>
+      <p class="tiny muted" style="margin-top:10px;">
+        (Burayı Yağmur istediği gibi değiştirebilir.)
+      </p>
+    </section>
+
+    <section class="card reveal">
+      <div class="rowTitle">
+        <h2>📸 Çocukluk Fotoğrafı</h2>
+        <span class="hint">Dosya: <code>./img/zeynep-cocukluk.jpg</code></span>
+      </div>
+
+      <div class="photo">
+        <img
+          src="./img/zeynep-cocukluk.jpg"
+          alt="Zeynep'in çocukluk fotoğrafı"
+          loading="lazy"
+          onerror="this.style.display='none'; document.getElementById('ph').hidden=false;"
+        />
+        <div id="ph" class="photoPlaceholder" hidden>
+          <div class="phIcon">🖼️</div>
+          <div class="phText">
+            Fotoğraf henüz eklenmedi.<br />
+            <span class="tiny">img klasörüne <b>zeynep-cocukluk.jpg</b> koyunca otomatik görünür.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card reveal">
+      <h2>✨ Dilekler</h2>
+      <ul class="list">
+        <li>Sağlık ve huzur dolu bir yıl</li>
+        <li>Güzel haberler, bol gülümseme</li>
+        <li>Sevdiklerinizle sıcacık anılar</li>
+        <li>Kalbinizin hep ferah kalması</li>
+      </ul>
+    </section>
+
+    <footer class="footer reveal">
+      <div class="sig">Sevgiler, <b>Yağmur</b></div>
+      <div class="contrib">küçük katkı: Vedat</div>
+    </footer>
+  </main>
+
+  <audio id="bgm" preload="auto" loop>
+    <source src="./music.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    const heartsLayer = document.getElementById("hearts");
+    function spawnBgHeart() {
+      const h = document.createElement("span");
+      h.className = "heart";
+      h.style.left = (Math.random() * 100) + "vw";
+      h.style.animationDuration = (5 + Math.random() * 4) + "s";
+      h.style.opacity = (0.10 + Math.random() * 0.18).toFixed(2);
+      h.style.transform = "translateY(0) scale(" + (0.7 + Math.random() * 0.7) + ")";
+      heartsLayer.appendChild(h);
+      setTimeout(() => h.remove(), 9000);
+    }
+    for (let i = 0; i < 8; i++) setTimeout(spawnBgHeart, i * 500);
+    setInterval(spawnBgHeart, 850);
+
+    const btn = document.getElementById("btn");
+    const toast = document.getElementById("toast");
+    function burstHearts() {
+      const count = 22;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement("span");
+        p.className = "pop";
+        p.style.left = (10 + Math.random() * 80) + "vw";
+        p.style.top = (12 + Math.random() * 55) + "vh";
+        p.style.animationDelay = (Math.random() * 0.18) + "s";
+        p.style.transform = "translate(0,0) scale(" + (0.8 + Math.random() * 0.9) + ")";
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 2600);
+      }
+    }
+    btn.addEventListener("click", () => {
+      toast.hidden = false;
+      burstHearts();
+      btn.disabled = true;
+      btn.textContent = "İyi ki doğdunuz! 🌸";
+      setTimeout(() => { toast.hidden = true; }, 2600);
+    });
+
+    const els = document.querySelectorAll(".reveal");
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(el => io.observe(el));
+
+    const bgm = document.getElementById("bgm");
+    const musicBtn = document.getElementById("musicBtn");
+    let playing = false;
+
+    async function toggleMusic() {
+      try {
+        if (!playing) {
+          await bgm.play();
+          playing = true;
+          musicBtn.textContent = "🔇 Müziği Durdur";
+          musicBtn.classList.add("on");
+        } else {
+          bgm.pause();
+          playing = false;
+          musicBtn.textContent = "🔊 Müziği Başlat";
+          musicBtn.classList.remove("on");
+        }
+      } catch (err) {
+        musicBtn.textContent = "🔊 Basıp tekrar dene";
+      }
+    }
+    musicBtn.addEventListener("click", toggleMusic);
+  </script>
+</body>
+</html>
